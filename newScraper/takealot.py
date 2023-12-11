@@ -49,7 +49,8 @@ all_data = []
 chrome_options = Options()
 chrome_options.add_argument('--headless')  # Enable headless mode
 chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument('user-agent=AdsBot-Google')
+chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+
 
 # Create a webdriver instance with the specified options
 driver = webdriver.Chrome(options=chrome_options)
@@ -71,6 +72,9 @@ for i in All_links:
         # Wait to load page
         if driver.find_elements(By.XPATH, '//button[@class="button ghost search-listings-module_load-more_OwyvW"]')==[]:
             break
+
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(3)
         # find the load more button
         load_more_button = driver.find_element(By.XPATH, '//button[@class="button ghost search-listings-module_load-more_OwyvW"]')
         load_more_button.click()
@@ -84,6 +88,7 @@ for i in All_links:
 
     # Find all product 
     all_product = soup.findAll('div', class_="product-card product-card-module_product-card_fdqa8")
+    print('Scraping '+Category+' with '+str(len(all_product))+' products :'+URL)
     time.sleep(5)
     for j in all_product:
         price = j.find('li', class_="price product-card-module_price_zVU6d").text.strip().replace('R ','').replace(',','')
@@ -93,7 +98,7 @@ for i in All_links:
         else:
             availability = 'In Stock'
         all_data.append([name,price,availability,Category])
-    print('Scraping '+Category+' with '+str(len(all_product))+' products :'+URL)
+    
 driver.quit()
 
 # Write the data to csv file

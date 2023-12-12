@@ -84,7 +84,7 @@ for i in different_categories:
                     product_price = product_price.replace("R", "").replace(",", "").strip()
                 
                 # Save to csv
-                csv_writer.writerow([product_name, product_availability, product_price, category_name])
+                csv_writer.writerow([product_name, product_price, product_availability, category_name])
 
         else:
             print(f"Failed to retrieve the page. Status code: {response.status_code}")

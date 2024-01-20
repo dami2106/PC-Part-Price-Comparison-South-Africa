@@ -9,12 +9,12 @@ from selenium.webdriver.common.action_chains import ActionChains
 import requests
 import csv
 from datetime import datetime
-
+import os
 # datetime object containing current date and time
 now = datetime.now()
 
 # dd/mm/YY H:M:S
-dt_string = now.strftime("%d-%m-%Y_%H%M")
+dt_string = now.strftime("%d-%m-%Y")
 
 URL = 'https://www.wootware.co.za/'
 
@@ -22,8 +22,16 @@ URL = 'https://www.wootware.co.za/'
 home_response = requests.get(URL)
 home_soup = BeautifulSoup(home_response.text, 'html.parser')
 
+# Define the folder and subfolder paths
+folder_path = '../Products/'
+subfolder_path = f'{folder_path}{dt_string}/'
+
+# Check if the subfolder exists, and create it if it doesn't
+if not os.path.exists(subfolder_path):
+    os.makedirs(subfolder_path)
+
 # Create csv file
-csv_file = open(f'../Products/{dt_string}_wootware.csv', 'w', newline='', encoding='utf-8')
+csv_file = open(f'{subfolder_path}{dt_string}_Wootware.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Title','Price','In Stock','Category'])
 

@@ -27,15 +27,26 @@ function App() {
 
   return (
     <div className="App">
-      <input
+      {/* <input
         type="text"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={handleSearch}>Search</button> */}
+
+      <div className="wrap">
+        <div className="search">
+          <input type="text" className="searchTerm" placeholder="Search for a component" 
+           value={searchQuery}
+           onChange={(e) => setSearchQuery(e.target.value)}/>
+          <button type="submit" className="searchButton" onClick={handleSearch}>
+            ⌕
+          </button>
+        </div>
+      </div>
 
       {searchResults && (
-        <div>
+        <div className='moveText'>
           <h2>Search Results:</h2>
           <p>{searchResults.woot.Title}</p>
           <p><b>Evetech Price : R{searchResults.evetech.Price}</b></p>

@@ -1,25 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [currentTime, setCurrentTime] = useState({});
+  const [currentData, setCurrentData] = useState({});
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
-    fetch('/api').then(res => res.json()).then(data => {
-      setCurrentTime(data);
-    });
+    fetch("/api")
+      .then((res) => res.json())
+      .then((data) => {
+        setCurrentData(data);
+      });
   }, []);
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    setSearchInput(e.target.value);
+  };
+
+  console.log(searchInput);
 
   return (
     <div className="App">
-      <h1>
-        Wootware Search Results : 
-      </h1>
-        <p>{currentTime.woot}</p>
-        <h1>
-        Evetech Search Results : 
-      </h1>
-        <p>{currentTime.evetech}</p>
+
+      <input
+        type="text"
+        placeholder="Search here"
+        onChange={handleChange}
+        value={searchInput}
+      />
+
+      {currentData && (
+        <div>
+          {Object.keys(currentData).map((key) => (
+            <div key={key}>
+              <p>{currentData[key]}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

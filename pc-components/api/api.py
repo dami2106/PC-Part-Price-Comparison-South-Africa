@@ -19,7 +19,7 @@ def search():
         if int(search_result[1]) >= tol:
             return json.dumps(df[df['Title'] == search_result[0]].to_dict(orient='records')[0])
         
-        return None
+        return None 
     
         #Read in the wootware csv with pandas 
     woot = pd.read_csv('12-12-2023_2245_wootware.csv')

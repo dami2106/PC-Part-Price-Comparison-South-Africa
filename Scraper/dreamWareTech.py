@@ -4,12 +4,13 @@ import pandas as pd
 import warnings
 import time 
 from datetime import datetime
+import os
 
 # datetime object containing current date and time
 now = datetime.now()
 
 # dd/mm/YY H:M:S
-dt_string = now.strftime("%d-%m-%Y_%H%M")
+dt_string = now.strftime("%d-%m-%Y")
 
 pd.options.mode.chained_assignment = None
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -71,12 +72,13 @@ for elem in url_to_scrape:
         # Loop through all the products on the page
         for product in divs:
             price = -99
-            if product.find("p", class_="product-price").text.split(' ')[1] != "TBC":
-                price = float(product.find("p", class_="product-price").text.split(' ')[1].replace('R', ''))
-            title = product.find("p", class_="product-box-name").find("a").get("href").split("/")[-2].replace("-", " ")
-            in_stock = True if "with supplier" in product.find("p", class_="prod-availability").text.lower() else False
-        
-            df = pd.concat([df, pd.DataFrame({"Title": title, "Price": price, "In Stock": in_stock, "Category": category}, index=[0])], ignore_index=True)
+            if product.find("p", class_="product-price").text != "TBA":
+                if product.find("p", class_="product-price").text.split(' ')[1] != "TBC":
+                    price = float(product.find("p", class_="product-price").text.split(' ')[1].replace('R', ''))
+                title = product.find("p", class_="product-box-name").find("a").get("href").split("/")[-2].replace("-", " ")
+                in_stock = True if "with supplier" in product.find("p", class_="prod-availability").text.lower() else False
+            
+                df = pd.concat([df, pd.DataFrame({"Title": title, "Price": price, "In Stock": in_stock, "Category": category}, index=[0])], ignore_index=True)
         
         # Check if there is a next page
         if soup.find("p", id="next-nav"):
@@ -94,4 +96,13 @@ for elem in url_to_scrape:
     
     time.sleep(5)
 
-df.to_csv(f'../Products/{dt_string}_DreamWareTech.csv', index=False)
+# Define the folder and subfolder paths
+folder_path = '../Products/'
+subfolder_path = f'{folder_path}{dt_string}/'
+
+# Check if the subfolder exists, and create it if it doesn't
+if not os.path.exists(subfolder_path):
+    os.makedirs(subfolder_path)
+
+# Save the CSV file inside the subfolder
+df.to_csv(f'{subfolder_path}{dt_string}_DreamWareTech.csv', index=False)

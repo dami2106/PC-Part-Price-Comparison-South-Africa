@@ -22,7 +22,7 @@ dt_string = now.strftime("%d-%m-%Y")
 chrome_options = Options()
 chrome_options.add_argument('--headless')  # Enable headless mode
 # chrome_options.add_argument("--disable-gpu")
-# chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 chrome_options.add_argument('log-level=3')
 
 # Create a webdriver instance with the specified options
@@ -42,7 +42,6 @@ def scrape_site(driver,categories):
 
     # Use BeautifulSoup to parse the HTML
     soup = BeautifulSoup(page_source, 'html.parser')
-    print("Scraping:", soup)
 
     #Product category
     product_category = soup.find('div',class_='d-block cols-12 gap-2 gap-sm-3 comp-top-section')
@@ -60,7 +59,8 @@ def scrape_site(driver,categories):
     for i in products:
         # Get the product name and price and availability 
         product_names = i.find('h3', class_="fs-6 fw-2 lh-1 m-0 overflow-hidden h-100").text.strip()
-        product_price = int(i.find('div', class_="ComponentCard_Products__Price__SG2mn fw-3 fs-3 flex-shrink-0").text.replace("R ", "").strip())
+        
+        product_price = i.find('div', class_="ComponentCard_Products__Price__SG2mn fw-3 fs-3 flex-shrink-0").text.replace("R ", "").strip()
 
         product_availiable_text = str(i.find('span', class_="fw-1 fs-6 text-wrap").text.strip())
         # print(product_availiable_text)
@@ -74,14 +74,14 @@ def scrape_site(driver,categories):
 
 # Get the page source (HTML content)
 page_source = driver.page_source
-
+time.sleep(10)
 # Use BeautifulSoup to parse the HTML
 soup = BeautifulSoup(page_source, 'html.parser')
 
 # Find all categories button 
-categories = soup.findAll('div', class_='Components_Child__mYntX Components_HoverGrow__br6Zs position-relative')
+categories = soup.findAll('div', class_='Components_Child__mYntX')
 page_positioin = 250
-
+print("Number of categories:", len(categories))
 for i, category in enumerate(categories):
     # Find all buttons within the category div
     buttons = category.find_all('button', class_='rounded-pill bg-gradient lh-1 border border-primary btn btn-light btn-sm')

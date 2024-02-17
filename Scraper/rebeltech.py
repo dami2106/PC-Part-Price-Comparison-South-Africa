@@ -45,7 +45,7 @@ if not os.path.exists(subfolder_path):
 # Open CSV File and write headers
 csv_file = open(f'{subfolder_path}{dt_string}_Rebeltech.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
-csv_writer.writerow(['Title','Price','In Stock','Category'])
+csv_writer.writerow(['Title','Price','In Stock','Category', 'URL'])
 
 # Loop through all the links
 for i in links:
@@ -76,8 +76,11 @@ for i in links:
             else:
                 if getAvailability.strip() == "Add to Cart":
                     prod_Availability = True
+
+            # Get the product URL
+            productURL = j.find("a", class_="product")["href"]
             # Add to CSV File
-            csv_writer.writerow([name,price,prod_Availability,categoryNames])
+            csv_writer.writerow([name,price,prod_Availability,categoryNames, productURL])
 
         # Get the total number of products
         totalProduct += (len(allProducts))

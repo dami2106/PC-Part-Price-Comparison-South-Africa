@@ -48,9 +48,12 @@ all_data = []
 # Set up Chrome options for headless mode and different user agent
 chrome_options = Options()
 chrome_options.add_argument('--headless')  # Enable headless mode
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+# chrome_options.add_argument("--disable-gpu")
+chrome_options.add_argument("--enable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure")
+chrome_options.add_argument('log-level=3')
 
+# 
+main_url = "https://www.takealot.com"
 
 # Create a webdriver instance with the specified options
 driver = webdriver.Chrome(options=chrome_options)
@@ -97,7 +100,9 @@ for i in All_links:
             availability = j.find('div', class_="cell shrink stock-availability-status").text.strip()
         else:
             availability = 'In Stock'
-        all_data.append([name,price,availability,Category])
+        
+        productURL = main_url+j.find('a', class_="product-anchor")['href']
+        all_data.append([name,price,availability,Category, productURL])
     
 driver.quit()
 
@@ -112,5 +117,5 @@ if not os.path.exists(subfolder_path):
 # Write the data to csv file
 with open(f'{subfolder_path}{dt_string}__Takealot.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
-    writer.writerow(['Title','Price','In Stock','Category'])
+    writer.writerow(['Title','Price','In Stock','Category', 'URL'])
     writer.writerows(all_data)

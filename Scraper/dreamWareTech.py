@@ -25,6 +25,8 @@ categories = home_soup.findAll('div', class_='col-md-6 col-lg-4')
 
 # Store all links that we need to scrape
 links = []
+# The main url for concatenating the productURl
+main_url = "https://www.dreamwaretech.co.za"
 
 # Skip the first link 
 for cate in categories[1:]:
@@ -50,7 +52,7 @@ for cate in categories[1:]:
 
 # Create a dataframe to store the data
 url_to_scrape = links
-df = pd.DataFrame(columns=["Title", "Price", "In Stock", "Category"])
+df = pd.DataFrame(columns=["Title", "Price", "In Stock", "Category", "URL"])
 
 # Loop through all the links and scrape the data
 for elem in url_to_scrape:
@@ -77,8 +79,11 @@ for elem in url_to_scrape:
                     price = float(product.find("p", class_="product-price").text.split(' ')[1].replace('R', ''))
                 title = product.find("p", class_="product-box-name").find("a").get("href").split("/")[-2].replace("-", " ")
                 in_stock = True if "with supplier" in product.find("p", class_="prod-availability").text.lower() else False
-            
-                df = pd.concat([df, pd.DataFrame({"Title": title, "Price": price, "In Stock": in_stock, "Category": category}, index=[0])], ignore_index=True)
+                product_url = main_url + product.find("a")["href"]
+                if title.__contains__("Ventus"):
+                    
+                    print(title, price, in_stock, category, product_url)
+                df = pd.concat([df, pd.DataFrame({"Title": title, "Price": price, "In Stock": in_stock, "Category": category, "URL": product_url}, index=[0])], ignore_index=True)
         
         # Check if there is a next page
         if soup.find("p", id="next-nav"):

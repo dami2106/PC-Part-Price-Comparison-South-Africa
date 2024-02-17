@@ -21,8 +21,9 @@ dt_string = now.strftime("%d-%m-%Y")
 # Set up Chrome options for headless mode and different user agent
 chrome_options = Options()
 chrome_options.add_argument('--headless')  # Enable headless mode
-chrome_options.add_argument("--disable-gpu")
-chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+# chrome_options.add_argument("--disable-gpu")
+# chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+chrome_options.add_argument('log-level=3')
 
 # Create a webdriver instance with the specified options
 driver = webdriver.Chrome(options=chrome_options)
@@ -31,6 +32,7 @@ driver = webdriver.Chrome(options=chrome_options)
 url = 'https://www.evetech.co.za/components.aspx'
 driver.get(url)
 
+mainURL = 'https://www.evetech.co.za'
 all_data = []
 
 def scrape_site(driver,categories):
@@ -40,7 +42,8 @@ def scrape_site(driver,categories):
 
     # Use BeautifulSoup to parse the HTML
     soup = BeautifulSoup(page_source, 'html.parser')
-    
+    print("Scraping:", soup)
+
     #Product category
     product_category = soup.find('div',class_='d-block cols-12 gap-2 gap-sm-3 comp-top-section')
     product_category = product_category.findAll('div', class_='detail')
@@ -63,7 +66,10 @@ def scrape_site(driver,categories):
         # print(product_availiable_text)
         product_availiablity = True if product_availiable_text.__contains__("In Stock") else False
 
-        all_data.append([product_names, product_price, product_availiablity, product_category])
+        # Get the product URL
+        product_url = mainURL + i.find('a')['href']
+
+        all_data.append([product_names, product_price, product_availiablity, product_category, product_url])
         # print(product_names, ": ", product_price, ": ", product_availiablity,": ", product_category)
 
 # Get the page source (HTML content)
@@ -146,5 +152,5 @@ if not os.path.exists(subfolder_path):
 # Write the data to csv file
 with open(f'{subfolder_path}{dt_string}_Evetech.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
-    writer.writerow(['Title','Price','In Stock','Category'])
+    writer.writerow(['Title','Price','In Stock','Category','URL'])
     writer.writerows(all_data)

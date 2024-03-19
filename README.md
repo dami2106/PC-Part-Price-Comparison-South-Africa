@@ -1,17 +1,25 @@
 # PC-Part-Price-Comparison-South-Africa
-A repo to store code that will track prices on various websites that provide computer parts. 
+A project that will scrape various computer part vendors, store and process the data, and allow users to compare prices across each vendor to find the best price. 
 
 ## Current websites for scraping: 
  - Wootware
  - Evetech
  - Dreamwaretech
  - Rebeltech
- - TakeAlot
+ - Takealot
 
-## Web App Details
- - Written with the DJango Framework. Requirements listed below.
+## Websites to be added: 
+ - Progenix 
+ - Titan Ice
+ - Rebel Gaming
+ - 
 
-## File Structure: 
-`{date}_{time}_{website}.csv`
-for example: `12-10-23_1730_wootware.csv`  
-New Data will be fetched at 6:00 UTC everyday. 
+## To-Do: 
+ - Parallelize scrapers
+ - Store data in database instead of CSVs
+ - Scraper code should incrementally update/add to database instead of doing full scrape and fetch each time 
+ - Imrpove search
+
+
+
+

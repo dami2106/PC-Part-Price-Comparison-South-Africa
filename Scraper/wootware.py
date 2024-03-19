@@ -62,7 +62,7 @@ for i in tqdm(different_categories):
             products = soup.find_all('div', class_="main-info")
 
             #@TODO: Remove this print when finalize
-            print(f"Found {len(products)} products on the page {category_name}.")
+            # print(f"Found {len(products)} products on the page {category_name}.")
 
             # Iterate through the products
             for product in products:
@@ -93,12 +93,12 @@ for i in tqdm(different_categories):
                     product_price = product_price.replace("R", "").replace(",", "").strip()
                 
                 # Get the product URL
-                product_url = product.find('a', class_="product")['href']
+                product_url = product.find('a', class_="product-image")['href']
                 # Save to csv
                 csv_writer.writerow([product_name, product_price, product_availability, category_name, product_url])
 
-        else:
-            print(f"Failed to retrieve the page. Status code: {response.status_code}")
+        # else:
+        #     print(f"Failed to retrieve the page. Status code: {response.status_code}")
 
         # Check if there is a next page
         if soup.find('a', class_="next i-next") is not None:

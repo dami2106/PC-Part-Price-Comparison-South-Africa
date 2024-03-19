@@ -67,10 +67,10 @@ for elem in tqdm(url_to_scrape):
     while paging:
         # Get the content of the page
         html_content = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        soup = BeautifulSoup(html_content.text)
+        soup = BeautifulSoup(html_content.text, features="html.parser")
         divs = soup.find_all("div", class_= "product card")
 
-        print("Scraping :" + url)
+        # print("Scraping :" + url)
         
         # Loop through all the products on the page
         for product in divs:
@@ -81,9 +81,7 @@ for elem in tqdm(url_to_scrape):
                 title = product.find("p", class_="product-box-name").find("a").get("href").split("/")[-2].replace("-", " ")
                 in_stock = True if "with supplier" in product.find("p", class_="prod-availability").text.lower() else False
                 product_url = main_url + product.find("a")["href"]
-                if title.__contains__("Ventus"):
-                    
-                    print(title, price, in_stock, category, product_url)
+            
                 df = pd.concat([df, pd.DataFrame({"Title": title, "Price": price, "In Stock": in_stock, "Category": category, "URL": product_url}, index=[0])], ignore_index=True)
         
         # Check if there is a next page

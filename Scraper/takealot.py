@@ -92,7 +92,7 @@ for i in tqdm(All_links):
 
     # Find all product 
     all_product = soup.findAll('div', class_="product-card product-card-module_product-card_fdqa8")
-    print('Scraping '+Category+' with '+str(len(all_product))+' products :'+URL)
+    # print('Scraping '+Category+' with '+str(len(all_product))+' products :'+URL)
     time.sleep(5)
     for j in all_product:
         price = j.find('li', class_="price product-card-module_price_zVU6d").text.strip().replace('R ','').replace(',','')

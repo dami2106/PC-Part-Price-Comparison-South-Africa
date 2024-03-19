@@ -55,7 +55,7 @@ def scrape_site(driver,categories):
 
     # Find the number of product
     products = soup.findAll('div', class_='ComponentCard_Products__Card__SJT5q ComponentCard_HoverGrow__Q2lEZ shadow overflow-hidden h-100 gap-2 position-relative card')
-    print("Number of products:", len(products))
+    # print("Number of products:", len(products))
 
     for i in products:
         # Get the product name and price and availability 
@@ -82,7 +82,7 @@ soup = BeautifulSoup(page_source, 'html.parser')
 # Find all categories button 
 categories = soup.findAll('div', class_='Components_Child__mYntX')
 page_positioin = 250
-print("Number of categories:", len(categories))
+# print("Number of categories:", len(categories))
 for i, category in tqdm(enumerate(categories)):
     # Find all buttons within the category div
     buttons = category.find_all('button', class_='rounded-pill bg-gradient lh-1 border border-primary btn btn-light btn-sm')
@@ -102,7 +102,7 @@ for i, category in tqdm(enumerate(categories)):
 
         # Click the button
         driver.find_element(By.XPATH, button_xpath).click()
-        print("Scraping:", driver.current_url)
+        # print("Scraping:", driver.current_url)
         # Scrape the site
         scrape_site(driver, button_view_all.text)
         time.sleep(3)
@@ -123,7 +123,7 @@ for i, category in tqdm(enumerate(categories)):
 
             # Click the button
             driver.find_element(By.XPATH, button_xpath).click()
-            print("Scraping:", driver.current_url)
+            # print("Scraping:", driver.current_url)
             # Scrape the site
             scrape_site(driver, button.text)
             time.sleep(3)

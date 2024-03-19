@@ -10,6 +10,7 @@ import requests
 import csv
 from datetime import datetime
 import os
+from tqdm import tqdm
 # datetime object containing current date and time
 now = datetime.now()
 
@@ -35,7 +36,7 @@ for p in URL:
         links.append([catLink, categoryNames])
 
 # Define the folder and subfolder paths
-folder_path = '../Products/'
+folder_path = '../Data/'
 subfolder_path = f'{folder_path}{dt_string}/'
 
 # Check if the subfolder exists, and create it if it doesn't
@@ -43,12 +44,12 @@ if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Open CSV File and write headers
-csv_file = open(f'{subfolder_path}{dt_string}_Rebeltech.csv', 'w', newline='', encoding='utf-8')
+csv_file = open(f'{subfolder_path}2_Rebeltech.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Title','Price','In Stock','Category', 'URL'])
 
 # Loop through all the links
-for i in links:
+for i in tqdm(links):
     # Get the URL and category name
     URL =i[0]
     categoryNames = i[1]

@@ -5,6 +5,7 @@ import warnings
 import time 
 from datetime import datetime
 import os
+from tqdm import tqdm
 
 # datetime object containing current date and time
 now = datetime.now()
@@ -29,7 +30,7 @@ links = []
 main_url = "https://www.dreamwaretech.co.za"
 
 # Skip the first link 
-for cate in categories[1:]:
+for cate in tqdm(categories[1:]):
     link = cate.find('a', href=True)
     new_links = 'https://www.dreamwaretech.co.za'+link['href']
     categories_name = cate.find('div', class_='category-text').text.strip()
@@ -55,7 +56,7 @@ url_to_scrape = links
 df = pd.DataFrame(columns=["Title", "Price", "In Stock", "Category", "URL"])
 
 # Loop through all the links and scrape the data
-for elem in url_to_scrape:
+for elem in tqdm(url_to_scrape):
     base_url = elem[0]
     category = elem[1]
 
@@ -102,7 +103,7 @@ for elem in url_to_scrape:
     time.sleep(5)
 
 # Define the folder and subfolder paths
-folder_path = '../Products/'
+folder_path = '../Data/'
 subfolder_path = f'{folder_path}{dt_string}/'
 
 # Check if the subfolder exists, and create it if it doesn't
@@ -110,4 +111,4 @@ if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Save the CSV file inside the subfolder
-df.to_csv(f'{subfolder_path}{dt_string}_DreamWareTech.csv', index=False)
+df.to_csv(f'{subfolder_path}0_DreamWareTech.csv', index=False)

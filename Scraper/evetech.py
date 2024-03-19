@@ -11,6 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 import os
+from tqdm import tqdm
 
 # datetime object containing current date and time
 now = datetime.now()
@@ -82,7 +83,7 @@ soup = BeautifulSoup(page_source, 'html.parser')
 categories = soup.findAll('div', class_='Components_Child__mYntX')
 page_positioin = 250
 print("Number of categories:", len(categories))
-for i, category in enumerate(categories):
+for i, category in tqdm(enumerate(categories)):
     # Find all buttons within the category div
     buttons = category.find_all('button', class_='rounded-pill bg-gradient lh-1 border border-primary btn btn-light btn-sm')
 
@@ -142,15 +143,15 @@ for i, category in enumerate(categories):
 # Close the browser
 driver.quit()
 # Define the folder and subfolder paths
-folder_path = '../Products/'
-subfolder_path = f'{folder_path}{dt_string}/'
+folder_path = '../Data/'
+subfolder_path = f'{folder_path}/'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Write the data to csv file
-with open(f'{subfolder_path}{dt_string}_Evetech.csv', 'w', newline='', encoding='utf-8') as f:
+with open(f'{subfolder_path}{dt_string}1_Evetech.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(['Title','Price','In Stock','Category','URL'])
     writer.writerows(all_data)

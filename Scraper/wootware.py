@@ -10,6 +10,7 @@ import requests
 import csv
 from datetime import datetime
 import os
+from tqdm import tqdm
 # datetime object containing current date and time
 now = datetime.now()
 
@@ -23,15 +24,15 @@ home_response = requests.get(URL)
 home_soup = BeautifulSoup(home_response.text, 'html.parser')
 
 # Define the folder and subfolder paths
-folder_path = '../Products/'
-subfolder_path = f'{folder_path}{dt_string}/'
+folder_path = '../Data/'
+subfolder_path = f'{folder_path}/'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Create csv file
-csv_file = open(f'{subfolder_path}{dt_string}_Wootware.csv', 'w', newline='', encoding='utf-8')
+csv_file = open(f'{subfolder_path}4_Wootware.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Title','Price','In Stock','Category','URL'])
 
@@ -40,7 +41,7 @@ nav_toggler = home_soup.find('div', class_='nav-dropdown level0')
 different_categories = nav_toggler.findAll('a', class_='ww-block ww-text-base ww-text-gray-500 hover:ww-text-amber-500 ww-py-0.5 ww-no-underline ww-whitespace-nowrap')
 
 # Iterate through the categories
-for i in different_categories:
+for i in tqdm(different_categories):
    
     #Every category name and link
     category_name = i.text.strip()

@@ -136,7 +136,7 @@ for i, category in tqdm(enumerate(categories)):
     
     # Get the page position
     if (i+1) % 3 == 0:
-        page_positioin += 250
+        page_positioin += 280
         
     i += 1
 
@@ -151,7 +151,7 @@ if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Write the data to csv file
-with open(f'{subfolder_path}{dt_string}1_Evetech.csv', 'w', newline='', encoding='utf-8') as f:
+with open(f'{subfolder_path}1_Evetech.csv', 'w', newline='', encoding='utf-8') as f:
     writer = csv.writer(f)
     writer.writerow(['Title','Price','In Stock','Category','URL'])
     writer.writerows(all_data)

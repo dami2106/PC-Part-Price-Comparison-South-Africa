@@ -102,7 +102,7 @@ for elem in tqdm(url_to_scrape):
 
 # Define the folder and subfolder paths
 folder_path = '../Data/'
-subfolder_path = f'{folder_path}/'
+subfolder_path = f'{folder_path}Raw/'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):

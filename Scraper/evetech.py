@@ -78,7 +78,7 @@ page_source = driver.page_source
 time.sleep(10)
 # Use BeautifulSoup to parse the HTML
 soup = BeautifulSoup(page_source, 'html.parser')
-
+# print(soup)
 # Find all categories button 
 categories = soup.findAll('div', class_='Components_Child__mYntX')
 page_positioin = 250
@@ -144,7 +144,7 @@ for i, category in tqdm(enumerate(categories)):
 driver.quit()
 # Define the folder and subfolder paths
 folder_path = '../Data/'
-subfolder_path = f'{folder_path}/'
+subfolder_path = f'{folder_path}Raw/'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):

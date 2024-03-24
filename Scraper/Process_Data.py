@@ -2,15 +2,18 @@ import numpy as np
 import pandas as pd 
 import os 
 import string
+data_location = '../Data/'
+raw_data_location = data_location + 'Raw/'
+processed_data_location = data_location + 'Processed/'
 
-
-data_sources = os.listdir('../Data')
+data_sources = os.listdir(raw_data_location)
 data_sources.sort()
-dreamware = pd.read_csv("../Data/" + data_sources[0])
-evetech = pd.read_csv("../Data/" + data_sources[1])
-rebeltech = pd.read_csv("../Data/" + data_sources[2])
-takealot = pd.read_csv("../Data/" + data_sources[3])
-wootware = pd.read_csv("../Data/" + data_sources[4])
+
+dreamware = pd.read_csv(raw_data_location + data_sources[0])
+evetech = pd.read_csv(raw_data_location + data_sources[1])
+rebeltech = pd.read_csv(raw_data_location + data_sources[2])
+takealot = pd.read_csv(raw_data_location + data_sources[3])
+wootware = pd.read_csv(raw_data_location + data_sources[4])
 
 
 dreamware['Category'] = dreamware['Category'].replace('Processors (CPUs)', 'CPU')
@@ -110,10 +113,10 @@ wootware['Title'] = wootware['Title'].apply(format_title)
 
 
 #Save updated dataframes
-dreamware.to_csv('../Data/dreamware.csv', index=False)
-evetech.to_csv('../Data/evetech.csv', index=False)
-rebeltech.to_csv('../Data/rebeltech.csv', index=False)
-takealot.to_csv('../Data/takealot.csv', index=False)
-wootware.to_csv('../Data/wootware.csv', index=False)
+dreamware.to_csv(processed_data_location+'dreamware.csv', index=False)
+evetech.to_csv(processed_data_location+'evetech.csv', index=False)
+rebeltech.to_csv(processed_data_location+'rebeltech.csv', index=False)
+takealot.to_csv(processed_data_location+'takealot.csv', index=False)
+wootware.to_csv(processed_data_location+'wootware.csv', index=False)
 
 

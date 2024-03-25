@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 import os 
 import string
-data_location = '../Data/'
+data_location = ''
 raw_data_location = data_location + 'Raw/'
 processed_data_location = data_location + 'Processed/'
 

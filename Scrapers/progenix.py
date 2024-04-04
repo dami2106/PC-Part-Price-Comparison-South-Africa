@@ -17,7 +17,7 @@ if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
 # Create csv file 
-csv_file = open(f'{subfolder_path}5_Progen.csv', 'w', newline='', encoding='utf-8')
+csv_file = open(f'{subfolder_path}5_Progenix.csv', 'w', newline='', encoding='utf-8')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Title','Price','In Stock','Category','URL'])
 

@@ -14,6 +14,7 @@ evetech = pd.read_csv(raw_data_location + data_sources[1])
 rebeltech = pd.read_csv(raw_data_location + data_sources[2])
 takealot = pd.read_csv(raw_data_location + data_sources[3])
 wootware = pd.read_csv(raw_data_location + data_sources[4])
+progenix = pd.read_csv(raw_data_location + data_sources[5])
 
 
 dreamware['Category'] = dreamware['Category'].replace('Processors (CPUs)', 'CPU')
@@ -110,6 +111,7 @@ evetech['Title'] = evetech['Title'].apply(format_title)
 rebeltech['Title'] = rebeltech['Title'].apply(format_title)
 takealot['Title'] = takealot['Title'].apply(format_title)
 wootware['Title'] = wootware['Title'].apply(format_title)
+progenix['Title'] = progenix['Title'].apply(format_title)
 
 
 #Save updated dataframes
@@ -118,5 +120,7 @@ evetech.to_csv(processed_data_location+'1_evetech.csv', index=False)
 rebeltech.to_csv(processed_data_location+'2_rebeltech.csv', index=False)
 takealot.to_csv(processed_data_location+'3_takealot.csv', index=False)
 wootware.to_csv(processed_data_location+'4_wootware.csv', index=False)
+progenix.to_csv(processed_data_location+'5_progenix.csv', index=False)
+
 
 

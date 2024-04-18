@@ -11,12 +11,51 @@ import csv
 from datetime import datetime
 import os
 from tqdm import tqdm
+
+
+def update_category(category):
+    if category == 'Graphics Cards':
+        return 'GPU'
+    elif category == 'Processors / CPUs':
+        return 'CPU'
+    elif category == 'Memory / RAM':
+        return 'RAM'
+    elif category == 'Motherboards':
+        return 'Motherboard'
+    elif category == 'Power Supplies / PSUs':
+        return 'PSU'
+    elif category == 'Cases / Chassis':
+        return 'Chassis'
+    elif category == 'Solid State Drives / SSDs':
+        return 'Storage'
+    elif category == 'Internal Hard Drives / HDDs':
+        return 'Storage'
+    elif category == 'External Hard Drives / HDDs':
+        return 'Storage'
+    elif category == 'Fans & CPU Coolers' or category == 'Water / Liquid Cooling':
+        return 'Cooler'
+    elif category == 'Other':
+        return 'Other'
+   
+    
+def format_title(title):
+    title = title.lower()
+    # @TODO: Uncomment the following lines if When finalizing the code
+    # title = title.replace('-', ' ')
+    # title = title.replace(',', ' ')
+    # title = title.replace('.', ' ')
+    # title = title.replace('(', '')
+    # title = title.replace(')', '')
+    # title = title.replace('[', '')
+    # title = title.replace(']', '')
+
+    return title
+
 # datetime object containing current date and time
 now = datetime.now()
 
 # dd/mm/YY H:M:S
 dt_string = now.strftime("%d-%m-%Y")
-
 
 URL = 'https://www.wootware.co.za/'
 
@@ -26,17 +65,16 @@ home_soup = BeautifulSoup(home_response.text, 'html.parser')
 
 # Define the folder and subfolder paths
 folder_path = '../Data/'
-subfolder_path = f'{folder_path}Raw/'
 
-# Check if the subfolder exists, and create it if it doesn't
-if not os.path.exists(subfolder_path):
-    os.makedirs(subfolder_path)
+# Open the database 
+import sqlite3
+conn = sqlite3.connect(folder_path + 'pc_stores.db')
+c = conn.cursor()
 
-# Create csv file
-csv_file = open(f'{subfolder_path}4_Wootware.csv', 'w', newline='', encoding='utf-8')
-csv_writer = csv.writer(csv_file)
-csv_writer.writerow(['Title','Price','In Stock','Category','URL'])
-
+total_products = 0
+total_update = 0
+total_Added = 0
+total_failed = 0
 # Find all the categories
 nav_toggler = home_soup.find('div', class_='nav-dropdown level0')
 different_categories = nav_toggler.findAll('a', class_='ww-block ww-text-base ww-text-gray-500 hover:ww-text-amber-500 ww-py-0.5 ww-no-underline ww-whitespace-nowrap')
@@ -46,6 +84,7 @@ for i in tqdm(different_categories):
    
     #Every category name and link
     category_name = i.text.strip()
+    category_name = update_category(category_name)
     URL = i['href']
 
     #Open the category link
@@ -62,6 +101,7 @@ for i in tqdm(different_categories):
             # Find all the products on the page
             products = soup.find_all('div', class_="main-info")
 
+            total_products += len(products)
             #@TODO: Remove this print when finalize
             # print(f"Found {len(products)} products on the page {category_name}.")
 
@@ -69,6 +109,7 @@ for i in tqdm(different_categories):
             for product in products:
                 # Get the product name
                 product_name = product.find('h2', class_="product-name").text.strip()
+                product_name = format_title(product_name)
 
                 # Get the product availability
                 get_availability = product.find('div', class_="availability-in-stock")
@@ -95,8 +136,28 @@ for i in tqdm(different_categories):
                 
                 # Get the product URL
                 product_url = product.find('a', class_="product-image")['href']
-                # Save to csv
-                csv_writer.writerow([product_name, product_price, product_availability, category_name, product_url])
+
+                # update the table
+                c.execute('''UPDATE wootware SET Price = ?, In_stock = ? WHERE URL = ?''', (product_price, product_availability, product_url))
+
+                # Check the row count affected by the update
+                rows_affected = c.rowcount
+
+                if rows_affected > 0:
+                    total_update += 1
+
+                else:
+                    c.execute('''INSERT INTO wootware (Title, Price, In_stock, Category, URL) VALUES (?, ?, ?, ?, ?)''', (product_name, product_price, product_availability, category_name, product_url))
+                    rows_affected = c.rowcount
+                    
+                    if rows_affected > 0:
+                        total_Added += 1
+                       
+                    else:
+                        total_failed += 1
+
+                # # Save to csv
+                # csv_writer.writerow([product_name, product_price, product_availability, category_name, product_url])
 
         # else:
         #     print(f"Failed to retrieve the page. Status code: {response.status_code}")
@@ -109,6 +170,13 @@ for i in tqdm(different_categories):
             stopping = True
         time.sleep(2)
     time.sleep(5)
+print(f"Total products: {total_products}")
+print(f"Total products updated: {total_update}")
+print(f"Total products added: {total_Added}")
+print(f"Total products failed: {total_failed}")
 
-# Close the csv file
-csv_file.close()
+
+# commit the changes
+conn.commit()
+# close the database
+c.close()

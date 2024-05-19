@@ -49,7 +49,7 @@ for i in All_links:
     
     # Start scraping all products under one category
     scraping = True
-    print(f"Scraping {url} category")
+    # print(f"Scraping {url} category")
     while scraping:
         # print(url)
         page_content = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"})

@@ -2,7 +2,9 @@ import concurrent.futures
 import subprocess
 
 # Define the paths to your Python scripts
-scripts = ["dreamwaretech.py",  "rebeltech.py",  "wootware.py"]
+scripts = ["dreamwaretech.py",  "rebeltech.py",  
+           "wootware.py", "takealot.py", 
+           "titanice.py", "progenix.py"]
 #"evetech.py","takealot.py",
 def run_script(script):
     print(f"Running {script}...")

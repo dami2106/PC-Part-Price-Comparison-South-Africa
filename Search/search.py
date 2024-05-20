@@ -67,7 +67,9 @@ for shop in search_result:
     if shop:
         try: 
              
-            table.append([shop.capitalize(), search_result[shop]['Title'].values[0].capitalize(), str(int(search_result[shop]['Price'].values[0])) ])
+            table.append([shop.capitalize(), 
+                          search_result[shop]['Title'].values[0].capitalize(), 
+                          str(int(search_result[shop]['Price'].values[0])) ])
         except:
             table.append([shop.capitalize(), "N/A", "N/A"])
 

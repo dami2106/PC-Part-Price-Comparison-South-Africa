@@ -96,13 +96,13 @@ wootware['Category'] = wootware['Category'].replace('Water / Liquid Cooling', 'C
 
 def format_title(title):
     title = title.lower()
-    title.replace('-', ' ')
-    title.replace(',', ' ')
-    title.replace('.', ' ')
-    title.replace('(', '')
-    title.replace(')', '')
-    title.replace('[', '')
-    title.replace(']', '')
+    title = title.replace('-', ' ')
+    title = title.replace(',', ' ')
+    title = title.replace('.', ' ')
+    title = title.replace('(', '')
+    title = title.replace(')', '')
+    title = title.replace('[', '')
+    title = title.replace(']', '')
 
     return title
 
@@ -115,6 +115,23 @@ wootware['Title'] = wootware['Title'].apply(format_title)
 progenix['Title'] = progenix['Title'].apply(format_title)
 titancie['Title'] = titancie['Title'].apply(format_title)
 
+#Format title of all dataframes:
+# dreamware['Price'] = dreamware['Price'].astype(int)
+# evetech['Price'] =   evetech['Price'].astype(int)
+# rebeltech['Price'] = rebeltech['Price'].astype(int)
+# takealot['Price'] =  takealot['Price'].astype(int)
+# wootware['Price'] =  wootware['Price'].astype(int)
+# progenix['Price'] =  progenix['Price'].astype(int)
+# titancie['Price'] =  titancie['Price'].astype(int)
+
+
+dreamware = dreamware[dreamware['In Stock']]  
+evetech = evetech[evetech['In Stock']]  
+rebeltech = rebeltech[rebeltech['In Stock']]  
+takealot = takealot[takealot['In Stock']]  
+wootware = wootware[wootware['In Stock']]  
+progenix = progenix[progenix['In Stock']]  
+titancie = titancie[titancie['In Stock']]  
 
 #Save updated dataframes
 dreamware.to_csv(processed_data_location+'0_dreamware.csv', index=False)
@@ -123,7 +140,7 @@ rebeltech.to_csv(processed_data_location+'2_rebeltech.csv', index=False)
 takealot.to_csv(processed_data_location+'3_takealot.csv', index=False)
 wootware.to_csv(processed_data_location+'4_wootware.csv', index=False)
 progenix.to_csv(processed_data_location+'5_progenix.csv', index=False)
-titancie.to_csv(processed_data_location+'6_titancie.csv', index=False)
+titancie.to_csv(processed_data_location+'6_titanice.csv', index=False)
 
 
 

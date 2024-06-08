@@ -1,7 +1,8 @@
-
-
 # %%
 # %%
+from nicegui import ui
+
+
 from thefuzz import fuzz
 from thefuzz import process
 import pandas as pd 
@@ -68,26 +69,43 @@ def search_all_stores(search_term, tol = 95):
     }
 
 
-# %%
-# %%
-# search_term = "32gb ddr5 6000"
 
-# search_result = search_all_stores(search_term=search_term, tol=95)
 
-# table = [['Store', 'Item', 'Price']]
-# t = Texttable()
-# for shop in search_result:
-#     if shop:
 
-#         try:
-#             table.append([shop.capitalize(), 
-#                           search_result[shop]['Title'].capitalize(), 
-#                           str(int(search_result[shop]['Price'])) ])
-#         except:
-#             table.append([shop.capitalize(), "N/A", "N/A"])
+columns = [
+    {'name': 'store', 'label': 'Store', 'field': 'store', 'sortable' : True, 'align': 'left'},
+    {'name': 'title', 'label': 'Title', 'field': 'title', 'sortable': True, 'align': 'left'},
+    {'name': 'price', 'label': 'Price', 'field': 'price', 'sortable': True, 'align': 'left'},
+]
 
-# t.add_rows(table)
-# print(t.draw())
+def on_search_click():
+    search_result = search_all_stores(search_term=search_box.value, tol=(float(knob.value) * 100))
+    results = []
+    for shop in search_result:
+        if shop:
 
+            try:
+                results.append({ 
+                    'store' : shop.capitalize(), 
+                    'title' : search_result[shop]['Title'].capitalize(), 
+                    'price' : str(int(search_result[shop]['Price'])) 
+                    })
+            except:
+                results.append({'store' : shop.capitalize(), 
+                            'title' : "N/A", 
+                            'price' :"N/A"})
+    table.rows = results
+
+search_box = ui.input(label='Search by Title')
+search_button = ui.button('Search', on_click=on_search_click)
+knob = ui.knob(0.95, show_value=True)
+table = ui.table(columns=columns, rows=[{ 
+                    'store' : shop.capitalize(), 
+                    'title' : 'N/A', 
+                    'price' : 'N/A'
+                    } for shop in search_all_stores(search_term=search_box.value, tol=(float(knob.value) * 100))], row_key='name')
+
+
+ui.run()
 
 

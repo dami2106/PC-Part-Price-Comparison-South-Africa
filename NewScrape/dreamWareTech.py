@@ -35,6 +35,10 @@ def format_category(category):
     category = category.replace('PC Cases/Chassis', 'Chassis')
     category = category.replace('Computer Cooling', 'Cooler')
 
+    # Replace the other categories with Others
+    if category not in ['CPU', 'GPU', 'Storage', 'Motherboard', 'RAM', 'PSU', 'Chassis', 'Cooler']:
+        category = 'Others'
+
     return category
 
 # Function to format the title
@@ -57,7 +61,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 ###CREATE CSV FILE
 # Define the folder and subfolder paths
 folder_path = '../Data/'
-subfolder_path = f'{folder_path}Raw/'
+subfolder_path = f'{folder_path}'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):
@@ -126,7 +130,7 @@ for elem in tqdm(links):
             if "with supplier" in product.find("p", class_="prod-availability").text.lower():
                 product_availability = True
                 product_name = product.find("p", class_="product-box-name").find("a").get("href").split("/")[-2].replace("-", " ")
-                product_price = int(product.find("p", class_="product-price").text.split(' ')[1].replace('R', ''))
+                product_price = int(float(product.find("p", class_="product-price").text.split(' ')[1].replace('R', '')))
                 product_url = main_url + product.find("a")["href"]
                 product_image_url = product.find("img")["src"]
 

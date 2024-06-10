@@ -28,6 +28,10 @@ def format_category(category):
     category = category.replace('Fans & CPU Coolers', 'Cooler')
     category = category.replace('Water / Liquid Cooling', 'Cooler')
 
+    # Replace the other categories with Others
+    if category not in ['GPU', 'CPU', 'RAM', 'Motherboard', 'PSU', 'Chassis', 'Storage', 'Cooler']:
+        category = 'Others'
+
     return category
 
 # Function to format the title
@@ -46,7 +50,7 @@ def format_title(title):
 ###CREATE CSV FILE
 # Define the folder and subfolder paths
 folder_path = '../Data/'
-subfolder_path = f'{folder_path}Raw/'
+subfolder_path = f'{folder_path}'
 
 # Check if the subfolder exists, and create it if it doesn't
 if not os.path.exists(subfolder_path):
@@ -114,9 +118,10 @@ for i in tqdm(different_categories):
                     else:
                         product_price = all_prices[1].text.strip()
 
+                    
                     # Remove the R and commas from the price
                     product_price = product_price.replace("R", "").replace(",", "").strip()  
-
+                    product_price = int(float(product_price))
                     # Get the image URL
                     product_image_url = product.find('div', class_='prolabel-wrapper').find('img')['data-src']
 

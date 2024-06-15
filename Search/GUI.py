@@ -12,13 +12,13 @@ from texttable import Texttable
 # %%
 # %%
 #Read in the wootware csv with pandas 
-dream = pd.read_csv('../Data/Processed/0_dreamware.csv')
-evetech = pd.read_csv('../Data/Processed/1_evetech.csv')
-rebel = pd.read_csv('../Data/Processed/2_rebeltech.csv')
-takealot = pd.read_csv('../Data/Processed/3_takealot.csv')
-woot = pd.read_csv('../Data/Processed/4_wootware.csv')
-progenix = pd.read_csv('../Data/Processed/5_progenix.csv')
-titanice = pd.read_csv('../Data/Processed/6_titanice.csv')
+dream = pd.read_csv('../Data/0_DreamWareTech.csv')
+evetech = pd.read_csv('../Data/1_Evetech.csv')
+rebel = pd.read_csv('../Data/2_Rebeltech.csv')
+takealot = pd.read_csv('../Data/3_Takealot.csv')
+woot = pd.read_csv('../Data/4_Wootware.csv')
+progenix = pd.read_csv('../Data/5_Progenix.csv')
+titanice = pd.read_csv('../Data/6_Titanice.csv')
 
 
 # %%

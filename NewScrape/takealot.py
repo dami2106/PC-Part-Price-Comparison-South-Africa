@@ -40,10 +40,24 @@ subfolder_path = f'{folder_path}'
 if not os.path.exists(subfolder_path):
     os.makedirs(subfolder_path)
 
-# Create csv file
-csv_file = open(f'{subfolder_path}3_Takealot.csv', 'w', newline='', encoding='utf-8')
-csv_writer = csv.writer(csv_file)
-csv_writer.writerow(['Title','Price','In Stock','Category','URL', 'Image URL'])
+# Define the csv file path
+csv_file_path = f'{subfolder_path}3_Takealot.csv'
+
+# Read existing data into a dictionary
+data_dict = {}
+if os.path.exists(csv_file_path):
+    with open(csv_file_path, 'r', newline='', encoding='utf-8') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        next(csv_reader)  # Skip header row
+        for row in csv_reader:
+            title, price, in_stock, category, url, image_url = row
+            data_dict[title] = {
+                'Price': price,
+                'In Stock': in_stock,
+                'Category': category,
+                'URL': url,
+                'Image URL': image_url
+            }
 
 ###SCRAPING
 # Get all the links for the categories
@@ -142,11 +156,23 @@ for i in tqdm(All_links):
             # Format the product name
             product_name = format_title(product_name)
 
-            # Save to csv
-            csv_writer.writerow([product_name, product_price, product_availability, category_name, product_url,product_image_url])  
+            # Update the data dictionary
+            data_dict[product_name] = {
+                'Price': product_price,
+                'In Stock': product_availability,
+                'Category': category_name,
+                'URL': product_url,
+                'Image URL': product_image_url
+            }
 
 # Quit the driver
 driver.quit()
 
-# Close CSV File
-csv_file.close()
+# Write the updated data back to the CSV file
+with open(csv_file_path, 'w', newline='', encoding='utf-8') as csv_file:
+    csv_writer = csv.writer(csv_file)
+    # Write the header row
+    csv_writer.writerow(['Title', 'Price', 'In Stock', 'Category', 'URL', 'Image URL'])
+    # Write the data rows
+    for title, data in data_dict.items():
+        csv_writer.writerow([title, data['Price'], data['In Stock'], data['Category'], data['URL'], data['Image URL']])

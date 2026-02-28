@@ -1,2 +1,14 @@
 
 .DS_Store
+/.claude
+*.pyc
+CLAUDE.md
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# API build artefacts
+api/builds/
+__pycache__/
+

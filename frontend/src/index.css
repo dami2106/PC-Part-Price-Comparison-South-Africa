@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-surface text-[#1a1a1a];
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-lg bg-[#1a1a1a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#333] active:bg-[#111] disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-sm font-medium text-[#1a1a1a] transition-colors hover:bg-surface active:bg-[#f0f0ee] disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-[#6b7280] transition-colors hover:bg-surface hover:text-[#1a1a1a];
+  }
+
+  .card {
+    @apply rounded-xl border border-border-subtle bg-white;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-border-subtle bg-white px-3 py-2.5 text-sm text-[#1a1a1a] placeholder-[#9ca3af] outline-none transition-colors focus:border-[#1a1a1a] focus:ring-0;
+  }
+
+  .store-badge {
+    @apply inline-flex cursor-pointer items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium transition-all;
+  }
+
+  .store-badge-selected {
+    @apply ring-2 ring-offset-1;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

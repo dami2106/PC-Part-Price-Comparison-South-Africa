@@ -10,16 +10,6 @@ A project that will scrape various computer part vendors, store and process the 
  - Progenix 
  - Titan Ice
 
-## Websites to be added: 
- - Rebel Gaming
- - GeeWiz
- - techguysa
-
-## To-Do: 
- - Store data in database instead of CSVs
- - Scraper code should incrementally update/add to database instead of doing full scrape and fetch each time 
- - Imrpove search
-
 
 
 

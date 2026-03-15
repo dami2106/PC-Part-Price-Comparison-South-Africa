@@ -27,10 +27,20 @@ app = FastAPI(title="PC Parts Price Comparator API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "https://dami2106.github.io",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "PC Parts API is running"}
 
 print("Loading product data and building search indices…")
 matcher = ProductMatcher(DATA_DIR)

@@ -3,13 +3,35 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --c-surface: #fafaf9;
+    --c-card: #ffffff;
+    --c-border: #e5e5e4;
+    --c-header: rgba(255, 255, 255, 0.96);
+    --c-text-1: #1a1a1a;
+    --c-text-2: #6b7280;
+    --c-text-3: #9ca3af;
+  }
+
+  .dark {
+    --c-surface: #111110;
+    --c-card: #1c1c1a;
+    --c-border: #2d2d2b;
+    --c-header: rgba(17, 17, 16, 0.96);
+    --c-text-1: #f0f0ee;
+    --c-text-2: #9a9a98;
+    --c-text-3: #666664;
+  }
+
   html {
     font-family: "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   body {
-    @apply bg-surface text-[#1a1a1a];
+    background-color: var(--c-surface);
+    color: var(--c-text-1);
+    transition: background-color 0.2s, color 0.2s;
   }
 
   * {
@@ -19,23 +41,54 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-[#1a1a1a] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#333] active:bg-[#111] disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+    background-color: var(--c-text-1);
+    color: var(--c-card);
+  }
+  .btn-primary:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+  .btn-primary:active:not(:disabled) {
+    opacity: 0.7;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-white px-4 py-2.5 text-sm font-medium text-[#1a1a1a] transition-colors hover:bg-surface active:bg-[#f0f0ee] disabled:opacity-40 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+    border: 1px solid var(--c-border);
+    background-color: var(--c-card);
+    color: var(--c-text-1);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--c-surface);
   }
 
   .btn-ghost {
-    @apply inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-[#6b7280] transition-colors hover:bg-surface hover:text-[#1a1a1a];
+    @apply inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-all duration-150;
+    color: var(--c-text-2);
+  }
+  .btn-ghost:hover {
+    background-color: var(--c-surface);
+    color: var(--c-text-1);
   }
 
   .card {
-    @apply rounded-xl border border-border-subtle bg-white;
+    @apply rounded-xl;
+    border: 1px solid var(--c-border);
+    background-color: var(--c-card);
+    transition: border-color 0.15s, background-color 0.2s;
   }
 
   .input {
-    @apply w-full rounded-lg border border-border-subtle bg-white px-3 py-2.5 text-sm text-[#1a1a1a] placeholder-[#9ca3af] outline-none transition-colors focus:border-[#1a1a1a] focus:ring-0;
+    @apply w-full rounded-lg px-3 py-2.5 text-sm outline-none transition-colors;
+    border: 1px solid var(--c-border);
+    background-color: var(--c-card);
+    color: var(--c-text-1);
+  }
+  .input::placeholder {
+    color: var(--c-text-3);
+  }
+  .input:focus {
+    border-color: var(--c-text-1);
   }
 
   .store-badge {
@@ -45,20 +98,40 @@
   .store-badge-selected {
     @apply ring-2 ring-offset-1;
   }
+
+  /* Skeleton shimmer */
+  .skeleton {
+    @apply rounded-md;
+    background: linear-gradient(
+      90deg,
+      var(--c-border) 25%,
+      var(--c-surface) 50%,
+      var(--c-border) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+
+  /* Header backdrop */
+  .header-blur {
+    background-color: var(--c-header);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--c-border);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--c-text-3);
 }

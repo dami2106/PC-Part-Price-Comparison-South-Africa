@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -32,7 +32,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load data and build indices at startup (may take a few seconds)
 print("Loading product data and building search indices…")
 matcher = ProductMatcher(DATA_DIR)
 print(f"Loaded {len(matcher.df):,} products across {matcher.df['store'].nunique()} stores.")
@@ -56,8 +55,63 @@ class BuildPayload(BaseModel):
     components: dict[str, Optional[BuildComponent]] = {}
 
 
+class PublishPayload(BaseModel):
+    author: str = "Anonymous"
+    description: str = ""
+
+
 # ---------------------------------------------------------------------------
-# Endpoints
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _build_path(build_id: str) -> str:
+    return os.path.join(BUILDS_DIR, f"{build_id}.json")
+
+
+def _load_build(build_id: str) -> dict:
+    path = _build_path(build_id)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Build not found")
+    with open(path) as f:
+        return json.load(f)
+
+
+def _save_build(build_id: str, data: dict):
+    with open(_build_path(build_id), "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def _total_price(build: dict) -> int:
+    return sum(c["price"] for c in build.get("components", {}).values() if c)
+
+
+def _to_summary(build: dict) -> dict:
+    return {
+        "id": build["id"],
+        "name": build["name"],
+        "total_price": _total_price(build),
+        "created_at": build.get("created_at", ""),
+        "updated_at": build.get("updated_at", ""),
+    }
+
+
+def _to_community_summary(build: dict) -> dict:
+    return {
+        "id": build["id"],
+        "name": build["name"],
+        "author": build.get("author", "Anonymous"),
+        "description": build.get("description", ""),
+        "total_price": _total_price(build),
+        "component_count": sum(1 for c in build.get("components", {}).values() if c),
+        "components": build.get("components", {}),
+        "published_at": build.get("published_at", ""),
+        "likes": build.get("likes", 0),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Endpoints — Categories & Search
 # ---------------------------------------------------------------------------
 
 
@@ -74,7 +128,9 @@ def search(query: str = "", category: Optional[str] = None):
     return {"groups": groups}
 
 
-# --- Builds CRUD ---
+# ---------------------------------------------------------------------------
+# Endpoints — Private Builds CRUD
+# ---------------------------------------------------------------------------
 
 
 @app.get("/api/builds")
@@ -85,18 +141,7 @@ def list_builds():
             continue
         with open(os.path.join(BUILDS_DIR, fname)) as f:
             build = json.load(f)
-        total = sum(
-            c["price"] for c in build.get("components", {}).values() if c
-        )
-        builds.append(
-            {
-                "id": build["id"],
-                "name": build["name"],
-                "total_price": total,
-                "created_at": build.get("created_at", ""),
-                "updated_at": build.get("updated_at", ""),
-            }
-        )
+        builds.append(_to_summary(build))
     builds.sort(key=lambda b: b.get("updated_at", ""), reverse=True)
     return {"builds": builds}
 
@@ -113,6 +158,11 @@ def create_build(payload: BuildPayload):
         },
         "created_at": now,
         "updated_at": now,
+        "published": False,
+        "published_at": None,
+        "author": "Anonymous",
+        "description": "",
+        "likes": 0,
     }
     _save_build(build_id, data)
     return data
@@ -145,22 +195,90 @@ def delete_build(build_id: str):
 
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Endpoints — Publish / Unpublish
 # ---------------------------------------------------------------------------
 
 
-def _build_path(build_id: str) -> str:
-    return os.path.join(BUILDS_DIR, f"{build_id}.json")
+@app.post("/api/builds/{build_id}/publish")
+def publish_build(build_id: str, payload: PublishPayload):
+    build = _load_build(build_id)
+    components = {k: v for k, v in build.get("components", {}).items() if v}
+    if not components:
+        raise HTTPException(status_code=400, detail="Cannot publish an empty build")
+    build["published"] = True
+    build["published_at"] = datetime.utcnow().isoformat()
+    build["author"] = payload.author.strip() or "Anonymous"
+    build["description"] = payload.description.strip()
+    _save_build(build_id, build)
+    return _to_community_summary(build)
 
 
-def _load_build(build_id: str) -> dict:
-    path = _build_path(build_id)
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="Build not found")
-    with open(path) as f:
-        return json.load(f)
+@app.post("/api/builds/{build_id}/unpublish")
+def unpublish_build(build_id: str):
+    build = _load_build(build_id)
+    build["published"] = False
+    _save_build(build_id, build)
+    return {"ok": True}
 
 
-def _save_build(build_id: str, data: dict):
-    with open(_build_path(build_id), "w") as f:
-        json.dump(data, f, indent=2)
+# ---------------------------------------------------------------------------
+# Endpoints — Community
+# ---------------------------------------------------------------------------
+
+
+@app.get("/api/community")
+def list_community(sort: str = Query("newest", pattern="^(newest|liked|price_asc|price_desc)$")):
+    builds = []
+    for fname in os.listdir(BUILDS_DIR):
+        if not fname.endswith(".json"):
+            continue
+        with open(os.path.join(BUILDS_DIR, fname)) as f:
+            build = json.load(f)
+        if build.get("published"):
+            builds.append(_to_community_summary(build))
+
+    if sort == "newest":
+        builds.sort(key=lambda b: b.get("published_at", ""), reverse=True)
+    elif sort == "liked":
+        builds.sort(key=lambda b: b.get("likes", 0), reverse=True)
+    elif sort == "price_asc":
+        builds.sort(key=lambda b: b.get("total_price", 0))
+    elif sort == "price_desc":
+        builds.sort(key=lambda b: b.get("total_price", 0), reverse=True)
+
+    return {"builds": builds}
+
+
+@app.post("/api/community/{build_id}/like")
+def like_build(build_id: str):
+    build = _load_build(build_id)
+    if not build.get("published"):
+        raise HTTPException(status_code=404, detail="Build not in community")
+    build["likes"] = build.get("likes", 0) + 1
+    _save_build(build_id, build)
+    return {"likes": build["likes"]}
+
+
+@app.post("/api/community/{build_id}/fork")
+def fork_build(build_id: str):
+    """Copy a community build into a new private build."""
+    source = _load_build(build_id)
+    if not source.get("published"):
+        raise HTTPException(status_code=404, detail="Build not in community")
+
+    new_id = str(uuid.uuid4())[:8]
+    now = datetime.utcnow().isoformat()
+    forked = {
+        "id": new_id,
+        "name": f"{source['name']} (forked)",
+        "components": source.get("components", {}),
+        "created_at": now,
+        "updated_at": now,
+        "published": False,
+        "published_at": None,
+        "author": "Anonymous",
+        "description": "",
+        "likes": 0,
+    }
+    _save_build(new_id, forked)
+    return forked

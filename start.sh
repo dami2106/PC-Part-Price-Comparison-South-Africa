@@ -9,7 +9,7 @@ conda run -n pc_parts bash -c "cd '$ROOT/api' && uvicorn main:app --reload --por
 API_PID=$!
 
 echo "Starting frontend dev server..."
-cd "$ROOT/frontend" && npm run dev &
+conda run -n base bash -c "cd '$ROOT/frontend' && npm run dev" &
 FRONTEND_PID=$!
 
 echo ""

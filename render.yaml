@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: pc-parts-api
+    runtime: python
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: cd api && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+    # Optional: uncomment to add a persistent disk so builds survive restarts.
+    # Costs ~$1/month for 1 GB.
+    # disk:
+    #   name: builds-storage
+    #   mountPath: /opt/render/project/src/api/builds
+    #   sizeGB: 1
